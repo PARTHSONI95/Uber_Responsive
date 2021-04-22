@@ -41,7 +41,7 @@ export default class SimpleLoginPage extends React.Component {
       this.setState({ isRememberMeChecked: !this.state.isRememberMeChecked });
     };
 
-    this.onLoginButtonClick = event => {
+    this.onLoginButtonClick = async event => {
       event.preventDefault();
       this.setState({ isValidUsername: !!this.state.usernameValue });
       this.setState({ isValidPassword: !!this.state.passwordValue });
@@ -53,6 +53,61 @@ export default class SimpleLoginPage extends React.Component {
       if (storedUser != null) {
         alert('Already logged in by user : ' + storedUser)
         return;
+      }
+
+      if (typeof (this.state.usernameValue) === 'undefined' || typeof (this.state.passwordValue) === 'undefined' || this.state.usernameValue == '' || this.state.passwordValue == '') {
+        alert('Please enter valid details');
+        return;
+      }
+      //.. return userid
+      const paramdict = {
+        'username': this.state.usernameValue,
+        'password': this.state.passwordValue
+      }
+  
+      try {
+        const config = {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(paramdict)
+        }
+        const response = await fetch("http://localhost:5000/userSignIn", config);
+        //const json = await response.json()
+        if (response.ok) {
+          console.log("success on send.");
+  
+        } else {
+          alert("launch: failure on send!");
+        }
+        try {
+            const data = await response.json();
+            console.log("on reply:")
+            console.log(data);
+            if(data == "User Already Sign In"){
+              alert('Already Logged In')
+              return "Already Logged In";
+            }else if(data == "Invalid Login"){
+              alert('Invalid Login');
+              return;
+            }else{
+            localStorage.setItem('role', data.username)
+            console.log(data.username)
+            alert('Login Successful');
+            this.props.history.push('/home');
+            return "<h1>Login Successful</h1>";
+          }
+  
+  
+        } catch (err) {
+          console.log(err);
+          alert("exception on reply!");
+        }
+  
+      } catch (error) {
+  
       }
       
     };
