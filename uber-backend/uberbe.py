@@ -20,6 +20,10 @@ from bson.objectid import ObjectId
 # straight mongo access
 from pymongo import MongoClient
 
+# For JWT
+import jwt
+
+
 # mongo
 #mongo_client = MongoClient('mongodb://localhost:27017/')
 #mongo_client = MongoClient("mongodb+srv://admin:admin@tweets.8ugzv.mongodb.net/tweets?retryWrites=true&w=majority")

@@ -1,6 +1,6 @@
 import React from 'react';
 import "@patternfly/react-core/dist/styles/base.css";
-import brandImg from './brandImgColor.svg';
+import brandImg from './mbta-logo@logotyp.us.svg';
 import { useHistory } from 'react-router-dom';
 
 
@@ -10,8 +10,9 @@ import {
   LoginMainFooterBandItem,
   LoginMainFooterLinksItem,
   LoginPage,
-  BackgroundImageSrc,
-  ListItem
+  BackgroundImage,
+  ListItem,
+  Spinner
 } from '@patternfly/react-core';
 import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
 
@@ -26,8 +27,20 @@ export default class SimpleLoginPage extends React.Component {
       isValidUsername: true,
       passwordValue: '',
       isValidPassword: true,
-      isRememberMeChecked: false
+      isRememberMeChecked: false,
+      user: localStorage.getItem('role')
     };
+
+    this.componentDidMount = () => {
+      console.log("User Aleady Logged In : " + this.state.user);
+      // verify user/pwd
+      if (this.state.user !== null) {
+        alert('Already logged in by user : ' + this.state.user);
+        this.props.history.replace('/home');
+      }   
+    }
+
+     
 
     this.handleUsernameChange = value => {
       this.setState({ usernameValue: value });
@@ -50,10 +63,6 @@ export default class SimpleLoginPage extends React.Component {
       const storedUser = localStorage.getItem('role');
       console.log("Before User" + storedUser);
       // verify user/pwd
-      if (storedUser != null) {
-        alert('Already logged in by user : ' + storedUser)
-        return;
-      }
 
       if (typeof (this.state.usernameValue) === 'undefined' || typeof (this.state.passwordValue) === 'undefined' || this.state.usernameValue == '' || this.state.passwordValue == '') {
         alert('Please enter valid details');
@@ -87,7 +96,7 @@ export default class SimpleLoginPage extends React.Component {
             console.log("on reply:")
             console.log(data);
             if(data == "User Already Sign In"){
-              alert('Already Logged In')
+              //alert('Already Logged In')
               return "Already Logged In";
             }else if(data == "Invalid Login"){
               alert('Invalid Login');
@@ -115,6 +124,15 @@ export default class SimpleLoginPage extends React.Component {
     this.handleHistory = () => {
         this.props.history.push('/signup');
     }
+
+    this.images = {
+      'xs': '/assets/images/pfbg_576.jpg',
+      'xs2x': '/assets/images/pfbg_576@2x.jpg',
+      'sm': '/assets/images/pfbg_768.jpg',
+      'sm2x': '/assets/images/pfbg_768@2x.jpg',
+      'lg': '/assets/images/pfbg_1200.jpg'
+    };
+
   }
 
   render() {
@@ -162,7 +180,7 @@ export default class SimpleLoginPage extends React.Component {
     );
     const forgotCredentials = (
       <LoginMainFooterBandItem>
-        <a href="#">Forgot username or password?</a>
+        <a href="#">Direct Login ? Click here...</a>
       </LoginMainFooterBandItem>
     );
 
@@ -200,25 +218,18 @@ export default class SimpleLoginPage extends React.Component {
       />
     );
 
-    const images = {
-      lg: '/assets/images/pfbg_1200.jpg',
-      sm: '/assets/images/pfbg_768.jpg',
-      sm2x: '/assets/images/pfbg_768@2x.jpg',
-      xs: '/assets/images/pfbg_576.jpg',
-      xs2x: '/assets/images/pfbg_576@2x.jpg'
-    };
-
+  
     return (
       
         
       <LoginPage
         footerListVariants="inline"
         brandImgSrc={brandImg}
-        brandImgAlt="PatternFly logo"
-        backgroundImgSrc={images} 
+        brandImgAlt="Brand logo"
+        backgroundImgSrc={this.images} 
         backgroundImgAlt="Images"
         footerListItems={listItem}
-        textContent="Book your UBER bus seat online within a minute"
+        textContent="Book your BUS seat online within a minute"
         loginTitle="Log in to your account"
         loginSubtitle="Please use your single sign-on LDAP credentials"
         socialMediaLoginContent={socialMediaLoginContent}
